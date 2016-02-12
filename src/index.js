@@ -36,7 +36,10 @@ class FloatClient extends EventEmitter {
 
     this._client.on('logOnResponse', response => {
       if (response.eresult !== EResult.OK) {
-        if (this.debug) { console.log('[login failed]') }
+        if (this.debug) {
+          console.log(response.eresult)
+          console.log('[login failed]')
+        }
         return this.emit('disconnected')
       }
 
@@ -113,7 +116,12 @@ class FloatClient extends EventEmitter {
     if (this.debug) { console.log('[message]', type) }
 
     if (type === 4004) { this._gcLoaded() }
-    if (type === 9157) { this._decodeFloat(header, buffer) }
+    if (type === 9157) {
+      this._decodeFloat(header, buffer)
+    }
+    else{
+        if (this._defer) { return this._defer.resolve(null) }
+    }
     if (callback) { callback(header, buffer) }
   }
 
